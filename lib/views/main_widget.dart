@@ -5,6 +5,14 @@ import 'package:iwangui/views/view_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:iwangui/views/settings_widget.dart';
 
+/*
+class Tab {
+  final String name;
+  final Widget widget;
+
+  Tab({required this.name, required this.widget});
+}*/
+
 class MainPage extends StatefulWidget {
   MainPage({super.key});
   @override
@@ -14,28 +22,42 @@ class MainPage extends StatefulWidget {
 class _MainPageState extends State<MainPage> {
   int _selectedPage = 0;
 
+  /*
+  List<Tab> pages = <Tab>[
+    Tab(name: "Настройки", widget: SettingPage()),
+    Tab(name: "Обзор 1", widget: ViewPageNavigator()),
+  ]; */
+
+  List<Widget> pages = <Widget>[
+    SettingPage(),
+    ViewPageNavigator()
+  ];
+
+
   void selectPage(int id) {
     setState(() {
       _selectedPage = id;    
     });
   }
 
-  Widget _getBody() {
-    late Widget toReturn;
-    switch(_selectedPage){
-      case 0:
-        toReturn = Navigator(
-          onGenerateRoute: (_) {
-            return MaterialPageRoute(builder:(context) => ViewPage());
-          },
-        );
-        break;
-      case 1:
-        toReturn = SettingPage();
-        break;
+  void addPage() {
+    setState(() {
+      pages.add(ViewPageNavigator());
+    });
+  }
+
+  List<Widget> _buildPages() {
+    List<TextButton> buttons = [];
+
+    for (int i = 1; i < pages.length; i++) {
+      buttons.add(TextButton(
+        onPressed: () => selectPage(i),
+        style: DarkTheme.textButtonStyle,
+        child: Text("Обзор $i")),
+      );
     }
 
-    return toReturn;
+    return buttons;
   }
 
   @override void initState() {
@@ -58,18 +80,21 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         backgroundColor: DarkTheme.appBarColor,
         centerTitle: false,
-        title: Row(children: <Widget>[
+        title: Row(children: _buildPages()),
+        actions: <Widget>[
           TextButton(
-            onPressed: () => selectPage(0),
+            onPressed: () {
+              addPage();
+            }, 
             style: DarkTheme.textButtonStyle,
-            child: Text("Обзор")),
+            child: Text("Добавить")),
           TextButton(
-            onPressed: () => selectPage(1), 
+            onPressed: () => selectPage(0), 
             style: DarkTheme.textButtonStyle,
             child: Text("Настройки"))
-        ]),
+        ],
       ),
-      body: _getBody(),
+      body: IndexedStack(index: _selectedPage, children: pages),
     );
   }
 }

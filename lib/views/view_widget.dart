@@ -5,6 +5,15 @@ import 'package:iwangui/viewmodels/view_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
+class ViewPageNavigator extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Navigator(
+      onGenerateRoute: (_) => MaterialPageRoute(builder:(context) => ViewPage())
+    );
+  }
+}
+
 class ViewPage extends StatefulWidget {
   const ViewPage({super.key});
   @override
