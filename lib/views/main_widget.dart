@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:iwangui/styles/dark_theme.dart';
-import 'package:provider/provider.dart';
+import 'package:iwangui/viewmodels/view_viewmodel.dart';
 import 'package:iwangui/views/view_widget.dart';
+import 'package:provider/provider.dart';
 import 'package:iwangui/views/settings_widget.dart';
 
 class MainPage extends StatefulWidget {
@@ -23,7 +24,11 @@ class _MainPageState extends State<MainPage> {
     late Widget toReturn;
     switch(_selectedPage){
       case 0:
-        toReturn = ViewPage();
+        toReturn = Navigator(
+          onGenerateRoute: (_) {
+            return MaterialPageRoute(builder:(context) => ViewPage());
+          },
+        );
         break;
       case 1:
         toReturn = SettingPage();
@@ -31,6 +36,19 @@ class _MainPageState extends State<MainPage> {
     }
 
     return toReturn;
+  }
+
+  @override void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_){
+      _loadInitialData();
+    });
+  }
+
+  Future<void> _loadInitialData() async {
+    ViewViewModel viewViewModel = Provider.of<ViewViewModel>(context, listen: false);
+    await viewViewModel.loadNamespaces();
   }
 
   @override

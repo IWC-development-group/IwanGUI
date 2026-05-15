@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:iwangui/styles/dark_theme.dart';
 import 'package:iwangui/viewmodels/settings_viewmodel.dart';
 import 'package:iwangui/viewmodels/view_viewmodel.dart';
-import 'package:iwangui/viewmodels/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 import '../views/main_widget.dart';
 
@@ -16,6 +16,7 @@ class AppWindow extends StatelessWidget {
       ChangeNotifierProvider(create: (context) => SettingsViewModel())
     ],
     child: MaterialApp(
+      color: DarkTheme.backgroundColor,
       title: "IwanGUI",
       home: MainPage(),
     ));
