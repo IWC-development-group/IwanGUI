@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:iwangui/styles/dark_theme.dart';
 import 'package:iwangui/viewmodels/view_viewmodel.dart';
 import 'package:iwangui/views/view_widget.dart';
@@ -21,6 +22,7 @@ class MainPage extends StatefulWidget {
 
 class _MainPageState extends State<MainPage> {
   int _selectedPage = 0;
+  final ScrollController _scrollController = ScrollController();
 
   /*
   List<Tab> pages = <Tab>[
@@ -46,19 +48,30 @@ class _MainPageState extends State<MainPage> {
     });
   }
 
-  List<Widget> _buildPages() {
+  Widget _buildPages() {
     List<TextButton> buttons = [];
 
     for (int i = 1; i < pages.length; i++) {
       buttons.add(TextButton(
         onPressed: () => selectPage(i),
         style: DarkTheme.textButtonStyle,
-        child: Text("Обзор $i")),
+        child: Text("Обзор $i"))
       );
     }
 
-    return buttons;
-  }
+    return Scrollbar(
+      scrollbarOrientation: ScrollbarOrientation.bottom,
+      controller: _scrollController,
+      thumbVisibility: true,
+      interactive: true,
+      thickness: 5,
+      child: SingleChildScrollView(
+        controller: _scrollController,
+        scrollDirection: Axis.horizontal,
+        physics: AlwaysScrollableScrollPhysics(),
+        child: Row(children: buttons)
+      ));
+    }
 
   @override void initState() {
     super.initState();
@@ -80,7 +93,7 @@ class _MainPageState extends State<MainPage> {
       appBar: AppBar(
         backgroundColor: DarkTheme.appBarColor,
         centerTitle: false,
-        title: Row(children: _buildPages()),
+        title: _buildPages(),
         actions: <Widget>[
           TextButton(
             onPressed: () {
