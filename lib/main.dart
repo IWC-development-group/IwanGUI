@@ -17,6 +17,7 @@ class AppWindow extends StatelessWidget {
     ],
     child: MaterialApp(
       color: DarkTheme.backgroundColor,
+      theme: ThemeData(brightness: Brightness.dark),
       title: "IwanGUI",
       home: MainPage(),
     ));

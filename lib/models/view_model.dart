@@ -50,8 +50,10 @@ class Namespace {
     await Future.delayed(Duration(milliseconds: 500));
 
     _pages = <int, IwanPage>{
-      1 : IwanPage(id: 1, name: "Страница1", namespace: name),
-      2 : IwanPage(id: 2, name: "Страница2", namespace: name),
+      1 : IwanPage(id: 1, name: "Page1", namespace: name),
+      2 : IwanPage(id: 2, name: "Page2", namespace: name),
+      3 : IwanPage(id: 3, name: "Page3", namespace: name),
+      4 : IwanPage(id: 4, name: "Page4", namespace: name),
     };
 
     loaded = true;
@@ -77,9 +79,10 @@ class IwanManager {
     await Future.delayed(Duration(milliseconds: 500));
 
     _namespaces = <int, Namespace>{
-      1 : Namespace(id: 1, name: "Test1"),
-      2 : Namespace(id: 2, name: "Test2"),
-      3 : Namespace(id: 3, name: "Test3")
+      1 : Namespace(id: 1, name: "Namespace1"),
+      2 : Namespace(id: 2, name: "Namespace2"),
+      3 : Namespace(id: 3, name: "Namespace3"),
+      4 : Namespace(id: 4, name: "Namespace4")
     };
   }
 

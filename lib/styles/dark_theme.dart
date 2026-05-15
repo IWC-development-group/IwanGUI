@@ -5,6 +5,7 @@ class DarkTheme {
   //Text
 
   static final textStyle = TextStyle(color: Colors.white);
+  static final pathBackgroundColor = const Color.fromARGB(255, 40, 40, 40); 
 
   //Widgets
   static final textButtonStyle = TextButton.styleFrom(

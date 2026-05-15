@@ -46,12 +46,21 @@ class _ViewPageState extends State<ViewPage> {
           return ListView.separated(
             separatorBuilder:(context, index) => Divider(),
             padding: EdgeInsets.all(15),
-            itemCount: _namespaces.length,
+            itemCount: _namespaces.length + 1,
             itemBuilder: (context, index) {
+              if (index == 0) {
+                return Container(
+                  width: double.infinity,
+                  color: DarkTheme.pathBackgroundColor,
+                  child: Text("namespaces/", style: DarkTheme.textStyle));
+              }
+
+              --index;
+
               return GestureDetector(
                 onTap: () {
                   Navigator.push(context, 
-                    MaterialPageRoute(builder:(context) => PagesView(namespaceID: _namespaces[index].id))
+                    MaterialPageRoute(builder:(context) => PagesView(namespaceID: _namespaces[index].id, namespaceVisualName: _namespaces[index].name ?? "unknown",))
                   );
                 },
                 child: Text(_namespaces[index].name ?? "null", style: DarkTheme.textStyle,));
@@ -64,16 +73,19 @@ class _ViewPageState extends State<ViewPage> {
 
 class PagesView extends StatefulWidget {
   final int namespaceID;
+  final String namespaceVisualName;
 
-  const PagesView({super.key, required this.namespaceID});
+  const PagesView({super.key, required this.namespaceID, required this.namespaceVisualName});
 
   @override
-  _PagesViewState createState() => _PagesViewState(namespaceID: namespaceID);
+  _PagesViewState createState() => _PagesViewState(namespaceID: namespaceID, namespaceVisualName: namespaceVisualName);
 }
 
 class _PagesViewState extends State<PagesView> {
   final int namespaceID;
-  _PagesViewState({required this.namespaceID});
+  final String namespaceVisualName;
+
+  _PagesViewState({required this.namespaceID, required this.namespaceVisualName});
 
   //Init
 
@@ -110,9 +122,15 @@ class _PagesViewState extends State<PagesView> {
       return ListView.separated(
         separatorBuilder: (context, index) => Divider(),
         padding: EdgeInsets.all(15),
-        itemCount: _pages.length + 1,
+        itemCount: _pages.length + 2,
         itemBuilder: (context, index) {
           if (index == 0) {
+            return Container(
+              width: double.infinity,
+              color: DarkTheme.pathBackgroundColor,
+              child: Text("namespaces/$namespaceVisualName/", style: DarkTheme.textStyle));
+          }
+          else if (index == 1) {
             return GestureDetector(
               onTap: () {
                 Navigator.pop(context);
@@ -121,7 +139,7 @@ class _PagesViewState extends State<PagesView> {
             ); 
           }
           
-          --index;
+          index-=2;
 
           return GestureDetector(
             onTap: () {
@@ -178,26 +196,14 @@ class _PageViewState extends State<PageView> {
       return Center(child: CircularProgressIndicator());
     }
 
-  /*
-    return Expanded(child: ListView(children: <Widget>[
-      GestureDetector(
-        onTap: () {
-          Navigator.pop(context);
-        },
-        child: Text("...", style: DarkTheme.textStyle)),
-      Markdown(
-        data: _page?.content ?? "# Page not loaded",
-        styleSheet: DarkTheme.markdownTheme)
-    ])
-    );
-    */
-
     return Scaffold(
       appBar: AppBar(
-        title: Text("${_page?.name ?? "Unknown"}"),
+        leading: CloseButton(color: Colors.white),
+        backgroundColor: const Color.fromARGB(255, 71, 71, 71),
+        title: Text("${_page?.name ?? "Unknown"}", style: DarkTheme.textStyle),
       ),
       backgroundColor: DarkTheme.backgroundColor,
-      
+
       body: Markdown(
         data: _page?.content ?? "# Page not loaded",
         styleSheet: DarkTheme.markdownTheme)
