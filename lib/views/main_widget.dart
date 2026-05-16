@@ -31,7 +31,7 @@ class _MainPageState extends State<MainPage> {
   ]; */
 
   List<Widget> pages = <Widget>[
-    SettingPage(),
+    SettingPageNavigator(),
     ViewPageNavigator()
   ];
 
