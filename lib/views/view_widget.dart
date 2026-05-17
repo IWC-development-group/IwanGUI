@@ -163,7 +163,7 @@ class _PagesViewState extends State<PagesView> {
           else if (index == 1) {
             return GestureDetector(
               onTap: () {
-                changeTabName(namespaceVisualName);
+                changeTabName("Обзор");
                 Navigator.pop(context);
               },
               child: Text("...", style: DarkTheme.textStyle),
