@@ -8,7 +8,19 @@ final Map<String, dynamic> baseConfig = {
 };
 
 class SettingsModel {
-  Future<List<String>> loadConfig({String path = "Configs"}) async {
+  List<String> _urls = [];
+
+  List<String> get urls => _urls;
+  
+  set urls (List<String> value) {
+    _urls = value;
+  }
+
+  SettingsModel._();
+  static final SettingsModel _instance  = SettingsModel._();
+  factory SettingsModel() => _instance;
+
+  Future<void> loadConfig({String path = "Configs"}) async {
     var myDir = Directory(path);
     if (!await myDir.exists()) {
       await myDir.create();
@@ -19,18 +31,21 @@ class SettingsModel {
       await file.create();
       final baseConfigJsonString = jsonEncode(baseConfig);
       await file.writeAsString(baseConfigJsonString);
-      return List<String>.from(baseConfig["URLS"]);
+      urls =  List<String>.from(baseConfig["URLS"]);
+      return;
     }
 
     try {
       final Map<String, dynamic> configString = jsonDecode(await file.readAsString());
-      return List<String>.from(configString["URLS"]);
+      urls =  List<String>.from(configString["URLS"]);
+      return;
     } catch (e) {
-      return <String>["Error load config $e"];
+      urls =  <String>["Error load config $e"];
+      return;
     }
   }
 
-  Future<void> saveConfig({String path = "Configs", required List<String> urls}) async {
+  Future<void> saveConfig({String path = "Configs"}) async {
     var myDir = Directory(path);
     if (!await myDir.exists()) {
       await myDir.create();

@@ -33,14 +33,14 @@ class _SettingPageState extends State<SettingPage> {
     var model = Provider.of<SettingsViewModel>(context, listen: false);
     await model.loadConfig();
     _textControllers = [];
-    for (var url in model.urls) {
+    for (var url in model.getUrls()) {
       _textControllers.add(TextEditingController(text: url));
     }
   }
 
   Future<void> _saveConfig(List<String> urls) async {
     var model = Provider.of<SettingsViewModel>(context, listen: false);
-    model.urls = urls;
+    model.setUrls(urls);
     await model.saveConfig();
   }
 
