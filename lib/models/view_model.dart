@@ -28,10 +28,10 @@ class IwanPage {
       Map<String, dynamic> response = await IwanApiService().getPage(namespace: namespace, page: name);
       if (response["status"] == "OK") {
         _content = response["content"];
-      }
 
-      isLoaded = true;
-      isLoading = false;
+        isLoaded = true;
+        isLoading = false;
+      }
     }
   }
 
@@ -49,17 +49,18 @@ class Namespace {
   Namespace({required this.id, required this.name});
 
   Future<void> loadPages() async {
-    Map<String, dynamic> response = await IwanApiService().getPages(namespace: name);
-    if (response["status"] == "OK") {
-      _pages = <int, IwanPage>{};
-      var counter = 1;
-      for (var page in response["pages"]) {
-        _pages?.addAll({counter: IwanPage(id: counter, name: page, namespace: name)});
-        ++counter;
+    List<Map<String, dynamic>> responses = await IwanApiService().getPages(namespace: name);
+    _pages = <int, IwanPage>{};
+    for (var response in responses) {
+      if (response["status"] == "OK") {
+        var counter = 1;
+        for (var page in response["pages"]) {
+          _pages?.addAll({counter: IwanPage(id: counter, name: page, namespace: name)});
+          ++counter;
+        }
+        loaded = true;
       }
     }
-
-    loaded = true;
   }
 
   IwanPage? getPage(int pageID) {
@@ -78,14 +79,15 @@ class IwanManager {
   IwanManager();
 
   Future<void> loadNamespaces() async {
-    Map<String,dynamic> response = await IwanApiService().getNamespaces();
+    List<Map<String,dynamic>> responses = await IwanApiService().getNamespaces();
     _namespaces = <int, Namespace>{};
-
-    if (response["status"] == "OK") {
-      var counter = 1;
-      for (var namespace in response["namespaces"]) {
-        _namespaces?.addAll({counter : Namespace(id: counter, name: namespace)});
-        ++counter;
+    for (var response in responses) {
+      if (response["status"] == "OK") {
+        var counter = 1;
+        for (var namespace in response["namespaces"]) {
+          _namespaces?.addAll({counter : Namespace(id: counter, name: namespace)});
+          ++counter;
+        }
       }
     }
   }

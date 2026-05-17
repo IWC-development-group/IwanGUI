@@ -9,9 +9,10 @@ final Map<String, dynamic> baseConfig = {
 
 class SettingsModel {
   List<String> _urls = [];
+  bool isLoaded = false;
 
   List<String> get urls => _urls;
-  
+
   set urls (List<String> value) {
     _urls = value;
   }
@@ -32,12 +33,14 @@ class SettingsModel {
       final baseConfigJsonString = jsonEncode(baseConfig);
       await file.writeAsString(baseConfigJsonString);
       urls =  List<String>.from(baseConfig["URLS"]);
+      isLoaded = true;
       return;
     }
 
     try {
       final Map<String, dynamic> configString = jsonDecode(await file.readAsString());
       urls =  List<String>.from(configString["URLS"]);
+      isLoaded = true;
       return;
     } catch (e) {
       urls =  <String>["Error load config $e"];
