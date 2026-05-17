@@ -3,8 +3,8 @@ import 'dart:io';
 
 class IwanPage {
   int id;
-  String? name;
-  String? namespace;
+  String name;
+  String namespace;
   String _content;
 
   bool isLoaded = false;
@@ -24,8 +24,12 @@ class IwanPage {
     if (isLoaded || isLoading){ return; }
     else {
       isLoading = true;
-      File contentFile = File("C:/Users/hejdj/Desktop/Другое/IwanServer/Fanfictions/ronald.md");
-      _content = await contentFile.readAsString();
+
+      Map<String, dynamic> response = await IwanApiService().getPage(namespace: namespace, page: name);
+      if (response["status"] == "OK") {
+        _content = response["content"];
+      }
+
       isLoaded = true;
       isLoading = false;
     }
@@ -36,7 +40,7 @@ class IwanPage {
 
 class Namespace {
   int id;
-  String? name;
+  String name;
   Map<int, IwanPage>? _pages;
   Map<int, IwanPage>? get pages => _pages;
 
@@ -45,16 +49,15 @@ class Namespace {
   Namespace({required this.id, required this.name});
 
   Future<void> loadPages() async {
-    //Debug load
-
-    await Future.delayed(Duration(milliseconds: 500));
-
-    _pages = <int, IwanPage>{
-      1 : IwanPage(id: 1, name: "Page1", namespace: name),
-      2 : IwanPage(id: 2, name: "Page2", namespace: name),
-      3 : IwanPage(id: 3, name: "Page3", namespace: name),
-      4 : IwanPage(id: 4, name: "Page4", namespace: name),
-    };
+    Map<String, dynamic> response = await IwanApiService().getPages(namespace: name);
+    if (response["status"] == "OK") {
+      _pages = <int, IwanPage>{};
+      var counter = 1;
+      for (var page in response["pages"]) {
+        _pages?.addAll({counter: IwanPage(id: counter, name: page, namespace: name)});
+        ++counter;
+      }
+    }
 
     loaded = true;
   }
@@ -75,15 +78,16 @@ class IwanManager {
   IwanManager();
 
   Future<void> loadNamespaces() async {
-    //Debug namespaces list
-    await Future.delayed(Duration(milliseconds: 500));
+    Map<String,dynamic> response = await IwanApiService().getNamespaces();
+    _namespaces = <int, Namespace>{};
 
-    _namespaces = <int, Namespace>{
-      1 : Namespace(id: 1, name: "Namespace1"),
-      2 : Namespace(id: 2, name: "Namespace2"),
-      3 : Namespace(id: 3, name: "Namespace3"),
-      4 : Namespace(id: 4, name: "Namespace4")
-    };
+    if (response["status"] == "OK") {
+      var counter = 1;
+      for (var namespace in response["namespaces"]) {
+        _namespaces?.addAll({counter : Namespace(id: counter, name: namespace)});
+        ++counter;
+      }
+    }
   }
 
   Namespace? getNamespace(int namespaceID) {
