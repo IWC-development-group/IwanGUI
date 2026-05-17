@@ -8,9 +8,11 @@ class SettingsViewModel extends ChangeNotifier{
 
   Future<void> loadConfig() async {
     urls = await _model.loadConfig();
+    notifyListeners();
   }
 
   Future<void> saveConfig() async {
-
+    await _model.saveConfig(urls: urls);
+    notifyListeners();
   }
 }
