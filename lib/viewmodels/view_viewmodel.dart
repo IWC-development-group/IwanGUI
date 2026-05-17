@@ -7,8 +7,8 @@ class ViewViewModel extends ChangeNotifier {
 
   ViewViewModel() : _iwanManager = IwanManager();
 
-  Future<List<Namespace>> loadNamespaces() async {
-    await _iwanManager.loadNamespaces();
+  Future<List<Namespace>> loadNamespaces({bool force = false}) async {
+    await _iwanManager.loadNamespaces(force: force);
     return _iwanManager.getNamespacesList();
   }
 

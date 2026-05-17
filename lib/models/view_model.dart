@@ -79,8 +79,9 @@ class IwanManager {
   bool loaded = false;
   IwanManager() : _namespaces = {} ;
 
-  Future<void> loadNamespaces() async {
-    if (loaded) {return;}
+  Future<void> loadNamespaces({bool force = false}) async {
+    if (loaded && !force) {return;}
+    _namespaces = {};
     List<Map<String,dynamic>?> responses = await IwanApiService().getNamespaces();
     var counter = 1;
     for (var response in responses) {

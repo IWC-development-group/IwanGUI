@@ -4,7 +4,7 @@ import 'package:iwangui/viewmodels/settings_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class SettingPageNavigator extends StatelessWidget {
-  const SettingPageNavigator({super.key});
+  SettingPageNavigator({super.key});
   @override
   Widget build(BuildContext context) {
     return Navigator(
@@ -14,7 +14,7 @@ class SettingPageNavigator extends StatelessWidget {
 }
 
 class SettingPage extends StatefulWidget {
-  const SettingPage ({super.key});
+  SettingPage ({super.key});
   @override
   _SettingPageState createState() => _SettingPageState();
 }

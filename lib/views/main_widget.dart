@@ -21,14 +21,28 @@ class _MainPageState extends State<MainPage> {
   }
 
   late List<Widget> pages = <Widget>[
-    SettingPageNavigator(),
-    ViewPageNavigator(pingUpdate: () => pingUpdate())
+    SettingPageNavigator(key: UniqueKey()),
+    ViewPageNavigator(pingUpdate: () => pingUpdate(), key: UniqueKey())
   ];
 
 
   void selectPage(int id) {
     setState(() {
       _selectedPage = id;    
+    });
+  }
+
+  void resetPages() async {
+    final model = Provider.of<ViewViewModel>(context,listen: false);
+    await model.loadNamespaces(force: true);
+    
+    setState(() {
+
+      pages = <Widget>[
+        SettingPageNavigator(key: UniqueKey()),
+        ViewPageNavigator(pingUpdate: () => pingUpdate(), key: UniqueKey())
+      ];
+      _selectedPage = 1;
     });
   }
 
@@ -103,7 +117,10 @@ class _MainPageState extends State<MainPage> {
           IconButton(
             onPressed: () => selectPage(0), 
             style: DarkTheme.textButtonStyle,
-            icon: Icon(Icons.settings))
+            icon: Icon(Icons.settings)),
+          IconButton.outlined(
+            onPressed: () => resetPages(), 
+            icon: Icon(Icons.update))
         ],
       ),
       body: IndexedStack(index: _selectedPage, children: pages),
