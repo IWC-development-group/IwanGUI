@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 
 final Map<String, dynamic> baseConfig = {
   "URLS" : <String>[
@@ -21,15 +22,22 @@ class SettingsModel {
   static final SettingsModel _instance  = SettingsModel._();
   factory SettingsModel() => _instance;
 
+  Future<String> getAppPath() async {
+    final dir = await getApplicationDocumentsDirectory();
+    return dir.path;
+  }
+
   Future<void> loadConfig({String path = "Configs"}) async {
-    var myDir = Directory(path);
+    var basePath = await getAppPath();
+    var myDir = Directory("$basePath/$path");
+
     if (!await myDir.exists()) {
-      await myDir.create();
+      await myDir.create(recursive: true);
     }
 
-    File file = File("$path/iwanconfig.json");
+    File file = File("${myDir.path}/iwanconfig.json");
     if (!await file.exists()) {
-      await file.create();
+      await file.create(recursive: true);
       final baseConfigJsonString = jsonEncode(baseConfig);
       await file.writeAsString(baseConfigJsonString);
       urls =  List<String>.from(baseConfig["URLS"]);
@@ -49,12 +57,14 @@ class SettingsModel {
   }
 
   Future<void> saveConfig({String path = "Configs"}) async {
-    var myDir = Directory(path);
+    var basePath = await getAppPath();
+    var myDir = Directory("$basePath/$path");
+
     if (!await myDir.exists()) {
-      await myDir.create();
+      await myDir.create(recursive: true);
     }
 
-    File file = File("$path/iwanconfig.json");
+    File file = File("${myDir.path}/iwanconfig.json");
     final Map<String, dynamic> res = {"URLS" : urls};
     await file.writeAsString(jsonEncode(res));
   } 
