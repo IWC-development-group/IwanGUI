@@ -86,12 +86,12 @@ class _SettingPageState extends State<SettingPage> {
                                     decoration: InputDecoration(labelText: "URL"),
                                   )
                               ),
-                              TextButton(
+                              IconButton(
                                 onPressed: (){
                                   _deleteElement(index);
                                 }, 
                                 style: DarkTheme.textButtonStyle,
-                                child: Text("Удалить"))
+                                icon: Icon(Icons.delete))
                             ]
                           )
                         );
@@ -100,14 +100,14 @@ class _SettingPageState extends State<SettingPage> {
                   ),
                   Row(
                     children: [
-                    TextButton(
+                    IconButton(
                       onPressed: (){
                         _addElement();
                       }, 
                       style: DarkTheme.textButtonStyle,
-                      child: Text("Добавить"),
+                      icon: Icon(Icons.add),
                     ),
-                    TextButton(
+                    IconButton(
                       onPressed: (){
                         List<String> urlList = [];
                         for (var controller in _textControllers) {
@@ -116,14 +116,14 @@ class _SettingPageState extends State<SettingPage> {
                         _saveConfig(urlList);
                       }, 
                       style: DarkTheme.textButtonStyle,
-                      child: Text("Сохранить"),
+                      icon: Icon(Icons.save),
                     ),
-                    TextButton(
+                    IconButton(
                       onPressed: (){
                         _loadConfig();
                       }, 
                       style: DarkTheme.textButtonStyle,
-                      child: Text("Загрузить"),
+                      icon: Icon(Icons.update),
                       )
                     ]
                   )

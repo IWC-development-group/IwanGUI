@@ -94,16 +94,16 @@ class _MainPageState extends State<MainPage> {
         centerTitle: false,
         title: _buildPages(),
         actions: <Widget>[
-          TextButton(
+          IconButton(
             onPressed: () {
               addPage();
             }, 
             style: DarkTheme.textButtonStyle,
-            child: Text("Добавить")),
-          TextButton(
+            icon: Icon(Icons.add)),
+          IconButton(
             onPressed: () => selectPage(0), 
             style: DarkTheme.textButtonStyle,
-            child: Text("Настройки"))
+            icon: Icon(Icons.settings))
         ],
       ),
       body: IndexedStack(index: _selectedPage, children: pages),
