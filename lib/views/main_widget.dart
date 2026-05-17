@@ -6,14 +6,6 @@ import 'package:iwangui/views/view_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:iwangui/views/settings_widget.dart';
 
-/*
-class Tab {
-  final String name;
-  final Widget widget;
-
-  Tab({required this.name, required this.widget});
-}*/
-
 class MainPage extends StatefulWidget {
   MainPage({super.key});
   @override
@@ -24,15 +16,13 @@ class _MainPageState extends State<MainPage> {
   int _selectedPage = 0;
   final ScrollController _scrollController = ScrollController();
 
-  /*
-  List<Tab> pages = <Tab>[
-    Tab(name: "Настройки", widget: SettingPage()),
-    Tab(name: "Обзор 1", widget: ViewPageNavigator()),
-  ]; */
+  void pingUpdate() {
+    setState(() {});
+  }
 
-  List<Widget> pages = <Widget>[
+  late List<Widget> pages = <Widget>[
     SettingPageNavigator(),
-    ViewPageNavigator()
+    ViewPageNavigator(pingUpdate: () => pingUpdate())
   ];
 
 
@@ -44,8 +34,17 @@ class _MainPageState extends State<MainPage> {
 
   void addPage() {
     setState(() {
-      pages.add(ViewPageNavigator());
+      pages.add(ViewPageNavigator(pingUpdate: () => pingUpdate()));
     });
+  }
+
+  String getTabName(int index) {
+    var page = pages[index];
+    if (page is ViewPageNavigator) {
+      return page.name;
+    }
+
+    return "Unknown";
   }
 
   Widget _buildPages() {
@@ -55,7 +54,7 @@ class _MainPageState extends State<MainPage> {
       buttons.add(TextButton(
         onPressed: () => selectPage(i),
         style: DarkTheme.textButtonStyle,
-        child: Text("Обзор $i"))
+        child: Text(getTabName(i)))
       );
     }
 

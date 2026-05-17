@@ -6,21 +6,37 @@ import 'package:provider/provider.dart';
 import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 
 class ViewPageNavigator extends StatelessWidget {
+  String name = "Обзор";
+  Function pingUpdate;
+
+  void setName(String value) {
+    name = value;
+    pingUpdate();
+  }
+
+  ViewPageNavigator({super.key, required this.pingUpdate});
+
   @override
   Widget build(BuildContext context) {
     return Navigator(
-      onGenerateRoute: (_) => MaterialPageRoute(builder:(context) => ViewPage())
+      onGenerateRoute: (_) => MaterialPageRoute(builder:(context) => ViewPage(changeTabName: setName))
     );
   }
 }
 
 class ViewPage extends StatefulWidget {
-  const ViewPage({super.key});
+  Function changeTabName;
+
+  ViewPage({super.key, required this.changeTabName});
   @override
-  _ViewPageState createState() => _ViewPageState();
+  _ViewPageState createState() => _ViewPageState(changeTabName: changeTabName);
 }
 
 class _ViewPageState extends State<ViewPage> {
+  final Function changeTabName;
+
+  _ViewPageState({required this.changeTabName});
+
   //Init
 
   @override
@@ -68,11 +84,13 @@ class _ViewPageState extends State<ViewPage> {
 
               return GestureDetector(
                 onTap: () {
+                  changeTabName(_namespaces[index].name);
+
                   Navigator.push(context, 
-                    MaterialPageRoute(builder:(context) => PagesView(namespaceID: _namespaces[index].id, namespaceVisualName: _namespaces[index].name ?? "unknown",))
+                    MaterialPageRoute(builder:(context) => PagesView(changeTabName: changeTabName, namespaceID: _namespaces[index].id, namespaceVisualName: _namespaces[index].name ?? "unknown",))
                   );
                 },
-                child: Text(_namespaces[index].name ?? "null", style: DarkTheme.textStyle,));
+                child: Text(_namespaces[index].name, style: DarkTheme.textStyle));
             },
           );
         },
@@ -81,20 +99,23 @@ class _ViewPageState extends State<ViewPage> {
 }
 
 class PagesView extends StatefulWidget {
+  final Function changeTabName;
   final int namespaceID;
   final String namespaceVisualName;
 
-  const PagesView({super.key, required this.namespaceID, required this.namespaceVisualName});
+  PagesView({super.key, required this.namespaceID, required this.namespaceVisualName, required this.changeTabName});
 
   @override
-  _PagesViewState createState() => _PagesViewState(namespaceID: namespaceID, namespaceVisualName: namespaceVisualName);
+  _PagesViewState createState() => _PagesViewState(namespaceID: namespaceID, namespaceVisualName: namespaceVisualName, changeTabName: changeTabName);
 }
 
 class _PagesViewState extends State<PagesView> {
+  Function changeTabName;
+
   final int namespaceID;
   final String namespaceVisualName;
 
-  _PagesViewState({required this.namespaceID, required this.namespaceVisualName});
+  _PagesViewState({required this.namespaceID, required this.namespaceVisualName, required this.changeTabName});
 
   //Init
 
@@ -142,6 +163,7 @@ class _PagesViewState extends State<PagesView> {
           else if (index == 1) {
             return GestureDetector(
               onTap: () {
+                changeTabName(namespaceVisualName);
                 Navigator.pop(context);
               },
               child: Text("...", style: DarkTheme.textStyle),
@@ -152,7 +174,8 @@ class _PagesViewState extends State<PagesView> {
 
           return GestureDetector(
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder:(context) => PageView(pageID: _pages[index].id, namespaceID: namespaceID)));
+              changeTabName(_pages[index].name);
+              Navigator.push(context, MaterialPageRoute(builder:(context) => PageView(pageID: _pages[index].id, namespaceID: namespaceID, changeTabName: changeTabName)));
             },
             child: Text(_pages[index].name, style: DarkTheme.textStyle,),
           );
@@ -163,15 +186,19 @@ class _PagesViewState extends State<PagesView> {
 }
 
 class PageView extends StatefulWidget {
+  final Function changeTabName;
+
   final int pageID;
   final int namespaceID;
 
-  PageView({super.key, required this.pageID, required this.namespaceID});
+  PageView({super.key, required this.pageID, required this.namespaceID, required this.changeTabName});
   @override
-  _PageViewState createState() => _PageViewState(pageID: pageID, namespaceID: namespaceID);
+  _PageViewState createState() => _PageViewState(pageID: pageID, namespaceID: namespaceID, changeTabName: changeTabName);
 }
 
 class _PageViewState extends State<PageView> {
+  Function changeTabName;
+
   final int pageID;
   final int namespaceID;
 
@@ -201,7 +228,7 @@ class _PageViewState extends State<PageView> {
     });
   }
 
-  _PageViewState({required this.pageID, required this.namespaceID});
+  _PageViewState({required this.pageID, required this.namespaceID, required this.changeTabName});
 
   @override
   Widget build(BuildContext context) {
@@ -211,7 +238,13 @@ class _PageViewState extends State<PageView> {
 
     return Scaffold(
       appBar: AppBar(
-        leading: CloseButton(color: Colors.white),
+        leading: CloseButton(
+          onPressed: () { 
+            changeTabName(_page?.namespace ?? "Unknown Page");
+            Navigator.pop(context);
+          },
+          color: Colors.white
+        ),
         backgroundColor: const Color.fromARGB(255, 71, 71, 71),
         title: Text("${_page?.name ?? "Unknown"}", style: DarkTheme.textStyle),
       ),
