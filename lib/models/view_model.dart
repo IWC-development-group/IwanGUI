@@ -10,12 +10,12 @@ class IwanPage {
   bool isLoaded = false;
   bool isLoading = false;
 
-  String get content {
+  Future<String> get content async {
     if (isLoaded){
       return _content;
     }
     else {
-      loadContent();
+      await loadContent();
       return _content;
     }
   }
@@ -25,8 +25,8 @@ class IwanPage {
     else {
       isLoading = true;
 
-      Map<String, dynamic> response = await IwanApiService().getPage(namespace: namespace, page: name);
-      if (response["status"] == "OK") {
+      Map<String, dynamic>? response = await IwanApiService().getPage(namespace: namespace, page: name);
+      if (response != null && response["status"] == "OK") {
         _content = response["content"];
 
         isLoaded = true;
@@ -46,14 +46,15 @@ class Namespace {
 
   bool loaded = false;
 
-  Namespace({required this.id, required this.name});
+  Namespace({required this.id, required this.name}) : _pages = {};
 
   Future<void> loadPages() async {
-    List<Map<String, dynamic>> responses = await IwanApiService().getPages(namespace: name);
-    _pages = <int, IwanPage>{};
+    if (loaded) {return;}
+    List<Map<String, dynamic>?> responses = await IwanApiService().getPages(namespace: name);
+    var counter = 1;
     for (var response in responses) {
+      if (response == null) {continue;}
       if (response["status"] == "OK") {
-        var counter = 1;
         for (var page in response["pages"]) {
           _pages?.addAll({counter: IwanPage(id: counter, name: page, namespace: name)});
           ++counter;
@@ -75,19 +76,21 @@ class Namespace {
 class IwanManager {
   Map<int, Namespace>? _namespaces;
   Map<int, Namespace>? get namespaces => _namespaces;
-
-  IwanManager();
+  bool loaded = false;
+  IwanManager() : _namespaces = {} ;
 
   Future<void> loadNamespaces() async {
-    List<Map<String,dynamic>> responses = await IwanApiService().getNamespaces();
-    _namespaces = <int, Namespace>{};
+    if (loaded) {return;}
+    List<Map<String,dynamic>?> responses = await IwanApiService().getNamespaces();
+    var counter = 1;
     for (var response in responses) {
+      if (response == null) {continue;}
       if (response["status"] == "OK") {
-        var counter = 1;
         for (var namespace in response["namespaces"]) {
           _namespaces?.addAll({counter : Namespace(id: counter, name: namespace)});
           ++counter;
         }
+        loaded = true;
       }
     }
   }

@@ -154,7 +154,7 @@ class _PagesViewState extends State<PagesView> {
             onTap: () {
               Navigator.push(context, MaterialPageRoute(builder:(context) => PageView(pageID: _pages[index].id, namespaceID: namespaceID)));
             },
-            child: Text(_pages[index].name ?? "null", style: DarkTheme.textStyle,),
+            child: Text(_pages[index].name, style: DarkTheme.textStyle,),
           );
         },
       );
@@ -179,6 +179,7 @@ class _PageViewState extends State<PageView> {
 
   bool _isPageLoading = true;
   IwanPage? _page;
+  String? _pageContent;
 
   @override
   void initState() {
@@ -189,10 +190,13 @@ class _PageViewState extends State<PageView> {
   Future<void> _loadPageData() async {
     _isPageLoading = true;
     final viewModel = Provider.of<ViewViewModel>(context, listen: false);
+
     final page = viewModel.loadPage(namespaceID, pageID);
-    await page?.loadContent();
+    final content = await page?.content;
+
     setState(() {
       _page = page;
+      _pageContent = content;
       _isPageLoading = false;
     });
   }
@@ -214,7 +218,7 @@ class _PageViewState extends State<PageView> {
       backgroundColor: DarkTheme.backgroundColor,
 
       body: Markdown(
-        data: _page?.content ?? "# Page not loaded",
+        data: _pageContent ?? "# Page not loaded",
         styleSheet: DarkTheme.markdownTheme)
     );
   }
